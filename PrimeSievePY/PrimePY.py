@@ -14,8 +14,9 @@ import timeit                               # For timing the durations
 
 class prime_sieve(object):
 
-    rawbits = None   # Storage for sieve - since we filter evens, just half as many bits
-    sieveSize = 0    # Upper limit, highest prime we'll consider
+    __slots__ = ('rawbits', 'sieveSize')    # slot lookups are faster in several implementations
+    #rawbits = None   # Storage for sieve - since we filter evens, just half as many bits
+    #sieveSize = 0    # Upper limit, highest prime we'll consider
 
     primeCounts = { 10 : 1,                 # Historical data for validating our results - the number of primes
                     100 : 25,               # to be found under some limit, such as 168 primes under 1000
@@ -29,7 +30,7 @@ class prime_sieve(object):
 
     def __init__(this, limit):
         this.sieveSize = limit
-        this.rawbits = [True] * (int((this.sieveSize+1)/2))
+        this.rawbits = bytearray(b'\1') * ((this.sieveSize+1)//2)
 
     # Look up our count of primes in the historical data (if we have it) to see if it matches
 
@@ -48,7 +49,7 @@ class prime_sieve(object):
         if (index % 2 == 0): # even numbers are automaticallty returned as non-prime
             return False
         else:
-            return this.rawbits[int(index/2)]
+            return this.rawbits[index//2]
 
     # ClearBit
     #
@@ -61,7 +62,7 @@ class prime_sieve(object):
             assert("If you're setting even bits, you're sub-optimal for some reason!")
             return False
         else:
-            this.rawbits[int(index/2)] = False
+            this.rawbits[index//2] = False
 
     # primeSieve
     # 
